@@ -89,6 +89,34 @@ async function occupied(req, res, next) {
   next()
 }
 
+async function tableExists(req, res, next) {
+  const { table_id } = req.params
+  const table = await service.read(table_id)
+
+  if (!table) {
+    return next({
+      status: 404,
+      message: `Table ${table_id} cannot be found.`,
+    })
+  }
+  res.locals.table = table
+
+  next()
+}
+
+async function vacant(req, res, next) {
+  const { table_id } = req.params
+  const table = await service.read(table_id)
+
+  if(!table.reservation_id) {
+    return next({
+      status: 400,
+      message: "Table is not occupied",
+    })
+  }
+  next()
+}
+
 async function reservationIsNotSeated(req, res, next) {
   const { reservation_id } = req.body.data
   const reservation = await reservationsService.read(reservation_id)
@@ -122,6 +150,14 @@ async function update(req, res) {
   res.status(200).json({ data: response });
 }
 
+async function destroy(req, res) {
+  const { table_id } = res.locals.table
+  const { reservation_id } = res.locals.table
+
+  const response = await service.destroy(table_id, reservation_id)
+  res.status(200).json({ data: response })
+}
+
 module.exports = {
   list: [asyncErrorBoundary(list)],
   create: [
@@ -134,5 +170,10 @@ module.exports = {
     asyncErrorBoundary(occupied),
     asyncErrorBoundary(reservationIsNotSeated),
     asyncErrorBoundary(update),
+  ],
+  delete: [
+    asyncErrorBoundary(tableExists),
+    asyncErrorBoundary(vacant),
+    asyncErrorBoundary(destroy),
   ],
 }

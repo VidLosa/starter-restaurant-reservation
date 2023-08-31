@@ -37,9 +37,33 @@ async function update(table_id, reservation_id) {
   });
 }
 
+async function destroy(table_id, reservation_id) {
+    return knex.transaction(async (trans) => {
+       try {
+       
+        const updatedTable = await trans("tables")
+        .where({ table_id })
+        .update({ reservation_id: null, occupied: false })
+        .returning("*")
+
+        await trans("reservations")
+        .where({ reservation_id })
+        .update({ status: "finished" })
+
+        await trans.commit()
+
+        return updatedTable
+    } catch (error) {
+        await trans.rollback()
+        throw error
+    }
+    })
+}
+
   module.exports = {
     list,
     read,
     create,
     update,
+    destroy,
   }
