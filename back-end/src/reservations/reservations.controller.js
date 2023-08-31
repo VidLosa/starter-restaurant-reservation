@@ -5,6 +5,20 @@ const service = require("./reservations.service")
  * List handler for reservation resources
  */
 
+async function reservationExists(req, res, next) {
+  const { reservation_id } = req.params
+  const reservation = await service.read(reservation_id)
+
+  if (reservation) {
+    res.locals.reservation = reservation
+    return next()
+  }
+  next({
+    status: 404,
+    message: `Reservation ${reservation_id} cannot be found.`,
+  })
+}
+
 function bodyDataHas(propertyName) {
   return function (req, res, next) {
     const { data = {} } = req.body;
@@ -116,6 +130,12 @@ async function create(req, res) {
   });
 }
 
+async function read(req, res) {
+  const { reservation_id } = res.locals.reservation
+  const data = await service.read(reservation_id)
+  res.json({ data })
+}
+
 
 
 module.exports = {
@@ -133,4 +153,5 @@ module.exports = {
     peopleIsValid("people"),
     asyncErrorBoundary(create),
   ],
+  read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
 };
