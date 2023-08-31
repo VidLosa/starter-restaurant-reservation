@@ -27,7 +27,7 @@ async function update(table_id, reservation_id) {
       //update reservations
       await seat("reservations")
         .where({ reservation_id })
-        .update({ status: "seated " });
+        .update({ status: "seated" });
 
       return updatedTable;
 

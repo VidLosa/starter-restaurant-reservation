@@ -92,6 +92,22 @@ function dateIsValid(field) {
   };
 }
 
+function dateCheck(field) {
+  return function (req, res, next) {
+    const { data: { [field]: value } = {} } = req.body
+
+    const date = new Date(value)
+
+    if(isNaN(date)) {
+      return next({
+        status: 400, 
+        message: `${field} must be s valid date.`,
+      })
+    }
+    next()
+  }
+}
+
 function peopleIsValid(field) {
   return function (req, res, next) {
   const { data: { [field]:value } = {} } = req.body;
@@ -113,12 +129,52 @@ function peopleIsValid(field) {
   };
 }
 
+function createStatus(field) {
+  return function (req, res, next) {
+    const {data: {[field]: value } = {} } = req.body
+    if (value === "seated" || value === "finished") {
+      return next({
+        status: 400,
+        message: `${field} cannot be seated or finished`,
+      })
+    }
+    next()
+  }
+}
+
+function finishedStatusCheck(req, res, next) {
+  const { reservation: { status } = {} } = res.locals
+  if (status === "finished") {
+    return next({
+      status: 400,
+      message: "a finished reservation cannot be updated",
+    })
+  }
+  next()
+}
+
+function statusCheck(field) {
+  return function (req, res, next) {
+    const { data: { [field]: value } = {} } = req.body
+
+    if (value === "unknown") {
+      return next({
+        status: 400,
+        message: `${field} cannot be ${value}`
+      })
+    }
+    next()
+  }
+}
+
 async function list(req, res) {
-  const { date } = req.query;
+  const { date, mobile_number } = req.query;
 
   let data;
   if (date) {
     data = await service.list(date);
+  } else if (mobile_number) {
+    data = await service.list(date)
   }
   res.json({ data });
 }
@@ -136,6 +192,39 @@ async function read(req, res) {
   res.json({ data })
 }
 
+async function updateStatus(req, res) {
+  const { reservation_id } = res.locals.reservation
+  const { status } = req.body.data
+
+  const response = await service.updateStatus(reservation_id, status)
+
+  res.status(200).json({ data: response[0] })
+}
+
+async function update(req, res) {
+  const {
+    first_name,
+    last_name,
+    mobile_number,
+    reservation_date,
+    reservation_time,
+    people,
+  } = req.body.data
+  const { reservation_id } = res.locals.reservation
+  const updatedReservation = {
+    first_name,
+    last_name,
+    mobile_number,
+    reservation_date,
+    reservation_time,
+    people,
+  }
+  const response = await service.update(
+    reservation_id,
+    updatedReservation
+  )
+  res.status(200).json({ data: response[0] })
+}
 
 
 module.exports = {
@@ -151,7 +240,27 @@ module.exports = {
     timeIsValid("reservation_time"),
     dateIsValid("reservation_date"),
     peopleIsValid("people"),
+    createStatus("status"),
     asyncErrorBoundary(create),
   ],
   read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
+  updateStatus: [
+    asyncErrorBoundary(reservationExists),
+    finishedStatusCheck,
+    statusCheck("status"),
+    asyncErrorBoundary(updateStatus),
+  ],
+  update: [
+    bodyDataHas("first_name"),
+    bodyDataHas("last_name"),
+    bodyDataHas("mobile_number"),
+    bodyDataHas("reservation_date"),
+    bodyDataHas("reservation_time"),
+    bodyDataHas("people"),
+    phoneNumberIsValid("mobile_number"),
+    dateCheck("reservation_date"),
+    timeIsValid("reservation_time"),
+    peopleIsValid("people"),
+    asyncErrorBoundary(update),
+  ]
 };
