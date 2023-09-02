@@ -251,6 +251,7 @@ module.exports = {
     asyncErrorBoundary(updateStatus),
   ],
   update: [
+    asyncErrorBoundary(reservationExists),
     bodyDataHas("first_name"),
     bodyDataHas("last_name"),
     bodyDataHas("mobile_number"),
