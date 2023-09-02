@@ -174,7 +174,7 @@ async function list(req, res) {
   if (date) {
     data = await service.list(date);
   } else if (mobile_number) {
-    data = await service.list(date)
+    data = await service.search(mobile_number)
   }
   res.json({ data });
 }
