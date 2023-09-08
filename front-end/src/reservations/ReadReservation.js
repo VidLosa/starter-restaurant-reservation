@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom/cjs/react-router-dom";
 require("dotenv").config();
 
 function ReadReservation({ reservation }) {
@@ -25,6 +26,11 @@ function ReadReservation({ reservation }) {
             <p className="card-text" data-reservation-id-status={reservation.reservation_id}>
               Status: {reservation.status}
             </p>
+            {reservation.status !== "booked" ? "" : <Link to={`/reservations/${reservation.reservation_id}/seat`} 
+            className="btn btn-primary" 
+            href={`/reservations/${reservation.reservation_id}/seat`}
+            >Seat
+            </Link>}
           </div>
         </div>
       </>

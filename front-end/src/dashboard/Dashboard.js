@@ -4,7 +4,9 @@ import ErrorAlert from "../layout/ErrorAlert";
 import { today, previous, next } from "../utils/date-time";
 import ReadReservation from "../reservations/ReadReservation";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import ReadTable from "../tables/ReadTable"
 require("dotenv").config();
+const BASE_URL = process.env.REACT_APP_API_BASE_URL
 
 
 /**
@@ -18,6 +20,8 @@ function Dashboard({ date }) {
   
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
+  const [tables, setTables] = useState([])
+  const [error, setError] = useState(null);
 
   useEffect(loadDashboard, [date]);
 
@@ -29,6 +33,26 @@ function Dashboard({ date }) {
       .catch(setReservationsError);
     return () => abortController.abort();
   }
+
+  useEffect(()=>{
+    const abortController = new AbortController();
+    try {
+      async function getTables(){
+        const response = await fetch(`${BASE_URL}/tables`, abortController.signal)
+        const data = await response.json()
+        setTables(data.data)
+      }
+      getTables()
+      
+    } catch (error) {
+      if (error.name !== "AbortError") {
+        setError(error);
+      }
+    }
+    return () => abortController.abort();
+  },[])
+
+
 
   return (
     <main>
@@ -57,6 +81,7 @@ function Dashboard({ date }) {
         }}
       >Next Day</button>
     </div>
+    <ErrorAlert error={error} />
     <ErrorAlert error={reservationsError} />
     <div>
       {reservations.map((reservation) => (
@@ -66,6 +91,12 @@ function Dashboard({ date }) {
         />
       ))}
     </div>
+    <div>
+          <h1>Tables</h1>
+        </div>
+        <div>
+          {tables.map((table) => <ReadTable key={table.table_id} table={table} />)}
+        </div>
   </main>
   );
 }
