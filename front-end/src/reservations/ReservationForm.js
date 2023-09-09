@@ -61,7 +61,7 @@ function ReservationForm({error, handleSubmit, handleCancel, reservation, formDa
                 name="first_name"
                 type="text"
                 onChange={handleChange}
-                value={formData.first_name}
+                value={reservation.first_name}
                 required
                 />
                 <label htmlFor="last_name">Last Name</label>
@@ -71,7 +71,7 @@ function ReservationForm({error, handleSubmit, handleCancel, reservation, formDa
                 name="last_name"
                 type="text"
                 onChange={handleChange}
-                value={formData.last_name}
+                value={reservation.last_name}
                 required
                 />
                 <label htmlFor="mobile_number">Mobile Number</label>
@@ -81,7 +81,7 @@ function ReservationForm({error, handleSubmit, handleCancel, reservation, formDa
                 name="mobile_number"
                 type="tel"
                 onChange={handleChange}
-                value={formData.mobile_number}
+                value={reservation.mobile_number}
                 required
                 />
                 <label htmlFor="reservation_date">Reservation Date</label>
@@ -91,7 +91,7 @@ function ReservationForm({error, handleSubmit, handleCancel, reservation, formDa
                 name="reservation_date"
                 type="date"
                 onChange={handleChange}
-                value={formData.reservation_date}
+                value={reservation.reservation_date}
                 required
                 />
                 <label htmlFor="reservation_time">Reservation Time</label>
@@ -101,7 +101,7 @@ function ReservationForm({error, handleSubmit, handleCancel, reservation, formDa
                 name="reservation_time"
                 type="time"
                 onChange={handleChange}
-                value={formData.reservation_time}
+                value={reservation.reservation_time}
                 required
                 />
                 <label htmlFor="people">Number of People</label>
@@ -111,20 +111,25 @@ function ReservationForm({error, handleSubmit, handleCancel, reservation, formDa
                 name="people"
                 type="number"
                 onChange={handleChange}
-                value={formData.people}
+                value={reservation.people}
                 required
                 />
-                {isTuesday && !isPastDate ? <div className="alert alert-danger"><p>The restaurant is closed on Tuesdays. Please choose another day.</p></div> : ""}
-                {isPastDate && !isTuesday ? <div className="alert alert-danger"><p>You picked a date that is in the past. Please choose a different date.</p></div> : ""}
-                {isTuesday && isPastDate ? <div className="alert alert-danger"><p>The restaurant is closed on Tuesdays. Please choose another day.</p> <p>You also picked a date that is in the past. Please choose a different date.</p></div> : ""}
-                {before1030 ? <div className="alert alert-danger"><p>Please choose a time after 10:30 AM.</p></div> : ""}
             </div>
-            <button type="submit" className="btn btn-primary mr-2">
+            <button 
+              type="submit" 
+              className="btn btn-primary mr-2">
                 Submit
             </button>
-            <button type="button" className="btn btn-secondary" onClick={handleCancel}>
+            <button 
+              type="button" 
+              className="btn btn-secondary" 
+              onClick={handleCancel}>
                 Cancel
             </button>
+            {isTuesday && !isPastDate ? <div className="alert alert-danger"><p>The restaurant is closed on Tuesdays. Please choose another day.</p></div> : ""}
+            {isPastDate && !isTuesday ? <div className="alert alert-danger"><p>You picked a date that is in the past. Please choose a different date.</p></div> : ""}
+            {isTuesday && isPastDate ? <div className="alert alert-danger"><p>The restaurant is closed on Tuesdays. Please choose another day.</p> <p>You also picked a date that is in the past. Please choose a different date.</p></div> : ""}
+            {before1030 ? <div className="alert alert-danger"><p>Please choose a time after 10:30 AM.</p></div> : ""}
         </form>
     </div>
 )
