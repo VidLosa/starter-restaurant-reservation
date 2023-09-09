@@ -52,6 +52,7 @@ function ReadTable({ table }) {
           </p>
           {table.reservation_id !== null ? (
             <button
+              className="btn btn-secondary"
               data-table-id-finish={table.table_id}
               onClick={handleFinish}
             >
