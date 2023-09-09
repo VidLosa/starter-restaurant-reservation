@@ -3,10 +3,12 @@ import React, {useState} from "react";
 
 function ReservationForm({error, handleSubmit, handleCancel, reservation, formData, setFormData}){
 
+  // State variables to track specific form validation conditions
   const [isTuesday, setIsTuesday] = useState(false);
   const [isPastDate, setIsPastDate] = useState(false);
   const [before1030, setBefore1030] = useState(false);
 
+  // Function to check if a given date is a Tuesday
   function isDateTuesday(date) {
         const selectedDate = new Date(`${date}T00:00:00`);
         const dayOfWeek = selectedDate.getUTCDay();
@@ -14,6 +16,7 @@ function ReservationForm({error, handleSubmit, handleCancel, reservation, formDa
         return dayOfWeek === 2;
       }
     
+  // Function to check if a given date is in the past
   function isDateInPast(date) {
     const selectedDate = new Date(`${date}T00:00:00`);
     const currentDate = new Date();
@@ -22,13 +25,15 @@ function ReservationForm({error, handleSubmit, handleCancel, reservation, formDa
     currentDate.setHours(0, 0, 0, 0);
     return selectedDate < currentDate;
     }
+
+  // Function to check if a given time is before 10:30 AM
   function isBefore10(time) {
     const selectedTime = new Date(`1970-01-01T${time}`);
     const earliestTime = new Date(`1970-01-01T10:30:00`);
     return selectedTime < earliestTime;
       }
     
-
+  // Function to handle form input changes
   function handleChange(event) {
     let newFormData = { ...formData };
     newFormData[event.target.name] = event.target.value;

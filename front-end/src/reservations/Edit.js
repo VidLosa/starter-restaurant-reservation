@@ -31,6 +31,7 @@ function Edit() {
     const abortController = new AbortController();
     try {
       async function getReservation() {
+         // Fetch reservation data by ID
         const response = await axios.get(
           `${BASE_URL}/reservations/${reservation_id}`, abortController.signal
         );
@@ -46,6 +47,7 @@ function Edit() {
     return () => abortController.abort();
   }, [reservation_id]);
 
+  // Navigate back to the previous page
   function handleCancel() {
     history.goBack();
   }
@@ -60,6 +62,7 @@ function Edit() {
     };
 
     try {
+      // Update the reservation data
       await axios.put(
         `${BASE_URL}/reservations/${reservation_id}`,
         { data: formDataCorrectTypes },

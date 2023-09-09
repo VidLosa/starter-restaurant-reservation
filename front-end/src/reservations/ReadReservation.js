@@ -19,10 +19,13 @@ function ReadReservation({ reservation }) {
       )
     ) {
       try {
+        // Send a PUT request to update the reservation status to "cancelled"
         await axios.put(
           `${BASE_URL}/reservations/${reservation.reservation_id}/status`,
           {data: { status: "cancelled" } }, abortController.signal
         );
+        // Redirect to the home page after successful cancellation
+        history.push("/");
         history.push("/");
       } catch (error) {
         if (error.name !== "AbortError") {

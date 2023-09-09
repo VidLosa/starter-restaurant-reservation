@@ -6,7 +6,9 @@ require("dotenv").config();
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 function SeatReservation(){
+    // Get the `reservation_id` from the URL parameters
     const { reservation_id } = useParams()
+    // Initial form data and other state variables
     const initialData = {
         table_id: "",
         reservation_id: reservation_id
@@ -16,7 +18,7 @@ function SeatReservation(){
     const [tables, setTables] = useState([])
     const [formData, setFormData] = useState(initialData)
 
-
+    // Fetch available tables from the API when the component mounts
     useEffect(()=>{
         const abortController = new AbortController()
         try {
@@ -35,16 +37,19 @@ function SeatReservation(){
         return () => abortController.abort();
     },[])
 
+    // Handle form input changes
     function handleChange(event){
         let newFormData = {...formData}
         newFormData[event.target.name] = event.target.value
         setFormData(newFormData)
     }
 
+    // Handle cancellation and navigate back
     function handleCancel(){
         history.goBack()
     }
 
+    // Handle form submission
     async function handleSubmit(event){
         event.preventDefault()
         const abortController = new AbortController()

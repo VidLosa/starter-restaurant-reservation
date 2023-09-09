@@ -15,6 +15,7 @@ function Search() {
   const [error, setError] = useState(null);
 
   function handleChange(event) {
+    // Update the form data when the input changes
     let newFormData = { ...formData };
     newFormData[event.target.name] = event.target.value;
     setFormData(newFormData);
@@ -24,6 +25,7 @@ function Search() {
     event.preventDefault();
     const abortController = new AbortController();
     try {
+    // Send a GET request to search for reservations based on mobile number
       const response = await axios.get(`${BASE_URL}/reservations?mobile_number=${formData.mobile_number}`, abortController.signal);
       const {data} = response.data
       setReservation(data)

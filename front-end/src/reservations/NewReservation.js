@@ -20,9 +20,11 @@ function NewReservation() {
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
 
+  // Navigate back to the previous page
   function handleCancel() {
     history.goBack();
   }
+  
   
   async function handleSubmit(event) {
     event.preventDefault();
@@ -33,11 +35,13 @@ function NewReservation() {
     };
 
     try {
+      // Send a POST request to create a new reservation
       await axios.post(
         `${BASE_URL}/reservations`,
         { data: formDataCorrectTypes },
         abortController.signal
       );
+      // Redirect to the dashboard with the selected reservation date
       history.push(`/dashboard?date=${formData.reservation_date}`);
     } catch (error) {
       if (error.name !== "AbortError") {

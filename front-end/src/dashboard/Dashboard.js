@@ -18,11 +18,13 @@ const BASE_URL = process.env.REACT_APP_API_BASE_URL
 function Dashboard({ date }) {
   const history = useHistory()
   
+  // Define state variables
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
   const [tables, setTables] = useState([])
   const [error, setError] = useState(null);
 
+  // Load reservations based on the selected date
   useEffect(loadDashboard, [date]);
 
   function loadDashboard() {
@@ -34,6 +36,7 @@ function Dashboard({ date }) {
     return () => abortController.abort();
   }
 
+  // Load tables when the component mounts
   useEffect(()=>{
     const abortController = new AbortController();
     try {
